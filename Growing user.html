@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WatchTime Booster</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: manipulation;
+            position: relative;
+        }
+
+        /* Disable zoom and selection */
+        body, html {
+            touch-action: pan-y;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #1a0000 0%, #0a0a0a 100%);
+            z-index: 100;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .welcome-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .welcome-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #ff0000, #ff5252);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: glow 2s infinite alternate, fadeIn 1.5s ease-out;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #ff0000, #b30000);
+            color: white;
+            border: none;
+            padding: 15px 45px;
+            font-size: 1.4rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+        }
+
+        .start-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 100%;
+            padding: 70px 20px 80px;
+            display: none;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+            border-bottom: 2px solid #ff0000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff0000, #ff5252);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Hamburger Menu */
+        .menu-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 60;
+            padding: 5px 10px;
+        }
+
+        .menu-btn:focus {
+            outline: none;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: rgba(20, 20, 20, 0.98);
+            z-index: 55;
+            transition: right 0.4s ease;
+            border-left: 2px solid #ff0000;
+            padding-top: 70px;
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .menu-items {
+            list-style: none;
+            padding: 20px;
+        }
+
+        .menu-items li {
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+            padding-bottom: 15px;
+        }
+
+        .menu-items li:last-child {
+            border-bottom: none;
+        }
+
+        .menu-items a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .menu-items a i {
+            margin-right: 15px;
+            color: #ff5252;
+            font-size: 1.4rem;
+        }
+
+        .menu-items a:hover {
+            color: #ff5252;
+        }
+
+        /* Form Section */
+        .form-container {
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 600px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #ff5252;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #333;
+            background: rgba(30, 30, 30, 0.8);
+            color: #fff;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border: 2px solid #ff0000;
+            outline: none;
+        }
+
+        .get-views-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #ff0000, #b30000);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .get-views-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(45deg, #ff3333, #cc0000);
+        }
+
+        /* Video Container */
+        .video-container {
+            display: none;
+            margin-top: 40px;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .video-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff5252;
+        }
+
+        .video-player {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 0, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .video-player iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            border: 2px solid #ff0000;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .popup-overlay.active .popup-content {
+            transform: scale(1);
+        }
+
+        .popup-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff5252;
+        }
+
+        .popup-text {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .copy-url {
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 1rem;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .copy-url:hover {
+            background: rgba(50, 50, 50, 0.8);
+        }
+
+        .copy-notice {
+            color: #ff5252;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .popup-btn {
+            background: linear-gradient(45deg, #ff0000, #b30000);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(45deg, #ff3333, #cc0000);
+        }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 2px solid #ff0000;
+            z-index: 40;
+        }
+
+        .footer-text {
+            font-size: 1.1rem;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .footer-text:hover {
+            color: #ff5252;
+        }
+
+        /* Animations */
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.6);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                transform: rotate(30deg) translateX(-100%);
+            }
+            100% {
+                transform: rotate(30deg) translateX(100%);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .welcome-title {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.7rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .start-btn {
+                padding: 12px 35px;
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Section -->
+    <section class="welcome-section" id="welcomeSection">
+        <div class="welcome-content">
+            <h1 class="welcome-title">📺 Complete Your Watch Time</h1>
+            <button class="start-btn" id="startBtn">Start Now</button>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <div class="container" id="mainContainer">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">WatchTime Booster</div>
+            <button class="menu-btn" id="menuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="sidebar" id="sidebar">
+                <ul class="menu-items">
+                    <li><a href="#" id="shareApp"><i class="fas fa-share-alt"></i> ⭐ Share App</a></li>
+                    <li><a href="#" id="moreApps"><i class="fas fa-boxes"></i> 📦 More Apps</a></li>
+                    <li><a href="#" id="visitStore"><i class="fas fa-store"></i> 🏬 Visit Store</a></li>
+                    <li><a href="#" id="policyPage"><i class="fas fa-file-alt"></i> 📜 Policy Page</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <!-- Form Section -->
+        <div class="form-container">
+            <h2 class="section-title">Boost Your YouTube Watch Time</h2>
+            <div class="input-group">
+                <label for="videoUrl">YouTube Video URL</label>
+                <input type="url" id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." required>
+            </div>
+            <div class="input-group">
+                <label for="viewsCount">Choose Views</label>
+                <select id="viewsCount">
+                    <option value="5">5 Views</option>
+                    <option value="10">10 Views</option>
+                    <option value="15">15 Views</option>
+                    <option value="20">20 Views</option>
+                    <option value="25">25 Views</option>
+                </select>
+            </div>
+            <button class="get-views-btn" id="getViewsBtn">Get Views</button>
+        </div>
+
+        <!-- Video Container -->
+        <div class="video-container" id="videoContainer">
+            <h2 class="video-title">Your Videos Are Playing</h2>
+            <div id="videosWrapper"></div>
+        </div>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-content">
+            <h2 class="popup-title" id="popupTitle">Share This App</h2>
+            <p class="popup-text" id="popupText">Boost your YouTube Watch Time fast – download now!</p>
+            <div class="copy-url" id="copyUrl">https://watchtimebooster.app</div>
+            <div class="copy-notice" id="copyNotice">URL copied to clipboard!</div>
+            <button class="popup-btn" id="popupBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-text" id="footerBtn">Powered by AppCraze</div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const welcomeSection = document.getElementById('welcomeSection');
+        const startBtn = document.getElementById('startBtn');
+        const mainContainer = document.getElementById('mainContainer');
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const videoUrl = document.getElementById('videoUrl');
+        const viewsCount = document.getElementById('viewsCount');
+        const getViewsBtn = document.getElementById('getViewsBtn');
+        const videoContainer = document.getElementById('videoContainer');
+        const videosWrapper = document.getElementById('videosWrapper');
+        const popupOverlay = document.getElementById('popupOverlay');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupText = document.getElementById('popupText');
+        const copyUrl = document.getElementById('copyUrl');
+        const copyNotice = document.getElementById('copyNotice');
+        const popupBtn = document.getElementById('popupBtn');
+        const footerBtn = document.getElementById('footerBtn');
+        const shareApp = document.getElementById('shareApp');
+        const moreApps = document.getElementById('moreApps');
+        const visitStore = document.getElementById('visitStore');
+        const policyPage = document.getElementById('policyPage');
+
+        // Initialize the app
+        function initApp() {
+            // Disable zooming and text selection
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('touchmove', function(e) {
+                if(e.scale !== 1) e.preventDefault();
+            }, { passive: false });
+        }
+
+        // Start Button Click
+        startBtn.addEventListener('click', () => {
+            welcomeSection.style.opacity = '0';
+            setTimeout(() => {
+                welcomeSection.style.display = 'none';
+                mainContainer.style.display = 'block';
+            }, 800);
+        });
+
+        // Menu Button Click
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !menuBtn.contains(e.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Get Views Button Click
+        getViewsBtn.addEventListener('click', () => {
+            const url = videoUrl.value;
+            const count = parseInt(viewsCount.value);
+            
+            if (!url) {
+                alert('Please enter a YouTube URL');
+                return;
+            }
+            
+            // Extract video ID
+            const videoId = extractVideoId(url);
+            if (!videoId) {
+                alert('Invalid YouTube URL');
+                return;
+            }
+            
+            // Clear previous videos
+            videosWrapper.innerHTML = '';
+            
+            // Create video players
+            for (let i = 0; i < count; i++) {
+                const videoPlayer = document.createElement('div');
+                videoPlayer.className = 'video-player';
+                videoPlayer.innerHTML = `
+                    <iframe 
+                        src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                `;
+                videosWrapper.appendChild(videoPlayer);
+            }
+            
+            // Show video container
+            videoContainer.style.display = 'flex';
+            
+            // Scroll to videos
+            videoContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Extract YouTube video ID
+        function extractVideoId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // Share App
+        shareApp.addEventListener('click', (e) => {
+            e.preventDefault();
+            sidebar.classList.remove('active');
+            popupTitle.textContent = 'Share This App';
+            popupText.textContent = 'Boost your YouTube Watch Time fast – download now!';
+            copyUrl.textContent = 'https://watchtimebooster.app';
+            popupOverlay.classList.add('active');
+        });
+
+        // More Apps
+        moreApps.addEventListener('click', (e) => {
+            e.preventDefault();
+            sidebar.classList.remove('active');
+            window.open('https://appcraze.example.com/more-apps', '_blank');
+        });
+
+        // Visit Store
+        visitStore.addEventListener('click', (e) => {
+            e.preventDefault();
+            sidebar.classList.remove('active');
+            window.open('https://appcraze.example.com/store', '_blank');
+        });
+
+        // Policy Page
+        policyPage.addEventListener('click', (e) => {
+            e.preventDefault();
+            sidebar.classList.remove('active');
+            popupTitle.textContent = 'Disclaimer & Policy';
+            popupText.innerHTML = `
+                This app allows you to increase watch time by playing YouTube videos. 
+                <br><br>
+                This is not an official app from YouTube. It's made by fans for fans. 
+                <br><br>
+                We do not guarantee any results or take responsibility for issues related to your YouTube channel.
+            `;
+            copyUrl.style.display = 'none';
+            popupOverlay.classList.add('active');
+        });
+
+        // Copy URL
+        copyUrl.addEventListener('click', () => {
+            const textArea = document.createElement('textarea');
+            textArea.value = copyUrl.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            copyNotice.style.display = 'block';
+            setTimeout(() => {
+                copyNotice.style.display = 'none';
+            }, 2000);
+        });
+
+        // Close Popup
+        popupBtn.addEventListener('click', () => {
+            popupOverlay.classList.remove('active');
+            copyUrl.style.display = 'block';
+        });
+
+        // Footer Button
+        footerBtn.addEventListener('click', () => {
+            window.open('https://appcraze.example.com', '_blank');
+        });
+
+        // Initialize the app
+        window.onload = initApp;
+    </script>
+</body>
+</html>
